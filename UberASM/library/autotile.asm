@@ -230,9 +230,11 @@ run:
         LDA #$C800 : STA $6B : STA $6E
     SEP #$20
     
-    LDA #$7F : STA $0A  ;; set up [$08] for the table at $7FC800
+    LDA #$7E : STA $6D
+    INC : STA $70 : STA $0A  ;; set up [$08] for the table at $7FC800
     
     REP #$10
+    
     
     STZ $03
     
@@ -293,7 +295,7 @@ ProcessTile:
         %checkUL()
         
         LDY $06
-        LDX $01 : LDA Autotiles,x : STA [$6B],y
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
     - RTS
 
 ProcessTopTile:
@@ -313,7 +315,7 @@ ProcessTopTile:
         ;%checkUL()
         
         LDY $06
-        LDX $01 : LDA Autotiles,x : STA [$6B],y
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
     
     - RTS
     
@@ -334,7 +336,7 @@ ProcessBottomTile:
         %checkUL()
         
         LDY $06
-        LDX $01 : LDA Autotiles,x : STA [$6B],y
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
     
     - RTS
     
@@ -356,7 +358,7 @@ ProcessLeftTile:
         %checkULalt() ;
         
         LDY $06
-        LDX $01 : LDA Autotiles,x : STA [$6B],y
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
     
     - RTS
 
@@ -378,7 +380,7 @@ ProcessRightTile:
         %checkUL()
         
         LDY $06
-        LDX $01 : LDA Autotiles,x : STA [$6B],y
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
     
     - RTS
 
@@ -400,7 +402,7 @@ ProcessTopLeftTile:
         ;%checkULalt() ;
         
         LDY $06
-        LDX $01 : LDA Autotiles,x : STA [$6B],y
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
     
     - RTS
 
@@ -422,7 +424,7 @@ ProcessBottomLeftTile:
         %checkULalt() ;
         
         LDY $06
-        LDX $01 : LDA Autotiles,x : STA [$6B],y
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
     
     - RTS
 
@@ -444,7 +446,7 @@ ProcessTopRightTile:
         ;%checkUL()
         
         LDY $06
-        LDX $01 : LDA Autotiles,x : STA [$6B],y
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
     
     - RTS
     
@@ -466,7 +468,7 @@ ProcessBottomRightTile:
         %checkUL()
         
         LDY $06
-        LDX $01 : LDA Autotiles,x : STA [$6B],y
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
     
     - RTS
  
