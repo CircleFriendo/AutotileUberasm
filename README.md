@@ -9,7 +9,7 @@ This utility allows you to build shapes in Lunar Magic using a single tile and i
 The autotiler is set up to process Map16 pages 10-1F (and 30-3F, 50-5F, etc.).
 Pick one of those pages and set up your edge pieces in the red area as shown:
 
-<img src="https://github.com/CircleFriendo/AutotileUberasm/assets/131226495/28775db9-9c74-46a6-9d48-e7479a435ff6" width="400">
+<img src="https://github.com/CircleFriendo/AutotileUberasm/assets/131226495/179cd246-0fbf-49fc-bc14-9e8d86390afc" width="400">
 
 # Usage
 Draw your level geometry using the tile in position 00 (e.g. 1000):
