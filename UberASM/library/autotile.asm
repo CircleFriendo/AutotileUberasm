@@ -230,8 +230,7 @@ run:
         LDA #$C800 : STA $6B : STA $6E
     SEP #$20
     
-    LDA #$7E : STA $6D
-    INC : STA $70 : STA $0A  ;; set up [$08] for the table at $7FC800
+    LDA $70 : STA $0A  ;; set up [$08] for the table at $7FC800
     
     REP #$10
     
