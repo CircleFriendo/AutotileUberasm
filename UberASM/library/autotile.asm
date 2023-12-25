@@ -84,65 +84,65 @@ endmacro
 macro checkL()
     LDY $06
     %shift_L()
-    LDA [$6E],y : CMP $00 : BNE +
+    LDA [$6E],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!L_bit : STA $01
-    +
+    ?+
 endmacro
 
 macro checkDL()
     LDY $06
     %shift_DL()
-    LDA [$6E],y : CMP $00 : BNE +
+    LDA [$6E],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!DL_bit : STA $01
-    + 
+    ?+ 
 endmacro
  
 macro checkD()
     LDY $06
     %shift_D()
-    LDA [$6E],y : CMP $00 : BNE +
+    LDA [$6E],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!D_bit : STA $01
-    + 
+    ?+ 
 endmacro
 
 macro checkDR()
     LDY $06
     %shift_DR()
-    LDA [$6E],y : CMP $00 : BNE +
+    LDA [$6E],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!DR_bit : STA $01
-    + 
+    ?+ 
 endmacro
 
 macro checkR()
     LDY $06
     %shift_R()
-    LDA [$6E],y : CMP $00 : BNE +
+    LDA [$6E],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!R_bit : STA $01
-    +
+    ?+
 endmacro
 
 macro checkUR()
     LDY $06
     %shift_UR()
-    LDA [$6E],y : CMP $00 : BNE +
+    LDA [$6E],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!UR_bit : STA $01
-    +
+    ?+
 endmacro
 
 macro checkU()
     LDY $06
     %shift_U()
-    LDA [$6E],y : CMP $00 : BNE +
+    LDA [$6E],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!U_bit : STA $01
-    + 
+    ?+ 
 endmacro
 
 macro checkUL()
     LDY $06
     %shift_UL()
-    LDA [$6E],y : CMP $00 : BNE +
+    LDA [$6E],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!UL_bit : STA $01
-    +
+    ?+
 endmacro
 
 
@@ -150,49 +150,49 @@ endmacro
 macro checkLalt()
     LDY $06
     %shift_Lalt()
-    LDA [$08],y : CMP $00 : BNE +
+    LDA [$08],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!L_bit : STA $01
-    +
+    ?+
 endmacro
 
 macro checkDLalt()
     LDY $06
     %shift_DLalt()
-    LDA [$08],y : CMP $00 : BNE +
+    LDA [$08],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!DL_bit : STA $01
-    + 
+    ?+ 
 endmacro
 
 macro checkDRalt()
     LDY $06
     %shift_DRalt()
-    LDA [$08],y : CMP $00 : BNE +
+    LDA [$08],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!DR_bit : STA $01
-    + 
+    ?+ 
 endmacro
 
 macro checkRalt()
     LDY $06
     %shift_Ralt()
-    LDA [$08],y : CMP $00 : BNE +
+    LDA [$08],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!R_bit : STA $01
-    +
+    ?+
 endmacro
 
 macro checkURalt()
     LDY $06
     %shift_URalt()
-    LDA [$08],y : CMP $00 : BNE +
+    LDA [$08],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!UR_bit : STA $01
-    +
+    ?+
 endmacro
 
 macro checkULalt()
     LDY $06
     %shift_ULalt()
-    LDA [$08],y : CMP $00 : BNE +
+    LDA [$08],y : CMP $00 : BNE ?+
         LDA $01 : ORA #!UL_bit : STA $01
-    +
+    ?+
 endmacro
 
 
@@ -268,14 +268,24 @@ ProcessScreen:
         REP #$20
             LDA $13D7|!addr : SEC : SBC #$0010 : STA $04
         SEP #$20
-        -   JSR ProcessLeftTile
+        -   LDA $03 : BEQ +
+                JSR ProcessLeftTile
+                BRA ++
+            +
+                JSR ProcessLeftEdgeTile
+            ++
             %shift_D()
             CPY $04 : BNE -
         
         ;process right tiles
         LDY #$001F
         REP #$20 : LDA $13D7|!addr : DEC : STA $04 : SEP #$20
-        -   JSR ProcessRightTile
+        -   LDA $03 : INC : CMP $5D : BEQ +
+                JSR ProcessRightTile
+                BRA ++
+            +
+                JSR ProcessRightEdgeTile
+            ++
             %shift_D()
             CPY $04 : BNE -
         
@@ -375,6 +385,28 @@ ProcessLeftTile:
     
     - RTS
 
+ProcessLeftEdgeTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        ;%set_alternate_page_left()
+        
+        ;%checkLalt()  ;
+        ;%checkDLalt() ;
+        %checkD()
+        %checkDR()
+        %checkR()
+        %checkUR()
+        %checkU()
+        ;%checkULalt() ;
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+    
+    - RTS
+
 ProcessRightTile:
     LDA [$6B],y : CMP #$00 : BNE -
     LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
@@ -389,6 +421,28 @@ ProcessRightTile:
         %checkDRalt()
         %checkRalt()
         %checkURalt()
+        %checkU()
+        %checkUL()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+    
+    - RTS
+
+ProcessRightEdgeTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        ;%set_alternate_page_right()
+        
+        %checkL()
+        %checkDL()
+        %checkD()
+        ;%checkDRalt()
+        ;%checkRalt()
+        ;%checkURalt()
         %checkU()
         %checkUL()
         
