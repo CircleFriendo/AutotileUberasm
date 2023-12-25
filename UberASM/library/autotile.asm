@@ -6,7 +6,7 @@
 ;;; $00     current map16 page
 ;;; $01-02  replacement tile
 ;;; $03     screen number
-;;; 
+;;; $04-05  ending Y for loops
 ;;; $06-07  Y backup
 ;;; $08-$0A alternate page address
 
@@ -237,13 +237,18 @@ run:
     
     STZ $03
     
-    --  LDY #$0011     ; skip first row
+ProcessScreen:  
+        
         ;process middle tiles
+        LDY #$0011     ; skip first row
+        REP #$20
+            LDA $13D7|!addr : SEC : SBC #$0011 : STA $04
+        SEP #$20
         -   TYA : AND #$0F : CMP #$0F : BNE +
                 INY : INY ; skip right and left column
             +
             JSR ProcessTile
-            INY : CPY #$019F : BNE -     ; skip last row
+            INY : CPY $04 : BNE -     ; skip last row
         
         ;process top tiles
         LDY #$0001
@@ -251,27 +256,36 @@ run:
             INY : CPY #$000F : BNE -
         
         ;process bottom tiles
-        LDY #$01A0
+        REP #$20 
+            LDA $13D7|!addr : SEC : SBC #$000F : TAY
+            LDA $13D7|!addr : DEC : STA $04
+        SEP #$20
         -   JSR ProcessBottomTile            
-            INY : CPY #$01AF : BNE -
+            INY : CPY $04 : BNE -
         
         ;process left tiles
         LDY #$0010
+        REP #$20
+            LDA $13D7|!addr : SEC : SBC #$0010 : STA $04
+        SEP #$20
         -   JSR ProcessLeftTile
             %shift_D()
-            CPY #$01A0 : BNE -
+            CPY $04 : BNE -
         
         ;process right tiles
         LDY #$001F
+        REP #$20 : LDA $13D7|!addr : DEC : STA $04 : SEP #$20
         -   JSR ProcessRightTile
             %shift_D()
-            CPY #$01AF : BNE -
+            CPY $04 : BNE -
         
         JSR ProcessCornerTiles
             
         %move_screen_right()
-        LDA $03 : INC : STA $03 : CMP $5D : BNE --
-    
+        LDA $03 : INC : STA $03 : CMP $5D : BEQ + 
+            JMP ProcessScreen
+        +
+        
     SEP #$30
     RTL
 
@@ -478,10 +492,14 @@ ProcessCornerTiles:
     LDY #$000F
     JSR ProcessTopRightTile
     
-    LDY #$01A0
+    REP #$20
+        LDA $13D7|!addr : SEC : SBC #$0010 : TAY
+    SEP #$20
     JSR ProcessBottomLeftTile
     
-    LDY #$01AF
+    REP #$20
+        LDA $13D7|!addr : DEC : TAY
+    SEP #$20
     JSR ProcessBottomRightTile
     
     RTS
