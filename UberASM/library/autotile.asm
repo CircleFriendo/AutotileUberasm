@@ -234,7 +234,31 @@ run:
     
     REP #$10
     
+    JSR ProcessLayer
     
+    LDA $0BF5|!addr : ASL : BCC +   ; Layer 2 active
+    
+    REP #$20    ; calculate layer 2 map16
+        AND #$003E : TAX
+        
+        LDA.l Layer2Offset,x : STA $6B : STA $6E
+    SEP #$20
+    
+    LDA $70 : STA $0A  ;; set up [$08] for the table at $7FC800
+    
+    REP #$10
+    
+    JSR ProcessLayer
+    
+    + RTL
+    
+Layer2Offset:
+    dw $E300, $E400, $E330, $E400, $E3A0, $E3C0, $E480, $E380
+    dw $E4E0, $E380, $E560, $E390, $E540, $E400, $E580, $E400
+    dw $E5C0, $E3C0, $E660, $E3D0, $E6F0, $E400, $E800, $E3F0
+    dw $E990, $E400, $ED40, $E400
+    
+ProcessLayer:   
     STZ $03
     
 ProcessScreen:  
@@ -297,10 +321,10 @@ ProcessScreen:
         +
         
     SEP #$30
-    RTL
-
-     
+         
     - RTS
+    
+    
 ProcessTile:
     LDA [$6B],y : CMP #$00 : BNE -
     LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
