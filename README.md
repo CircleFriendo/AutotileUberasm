@@ -26,9 +26,11 @@ You can place any other tiles from the same Map16 page without disrupting your s
 <img src="https://github.com/CircleFriendo/AutotileUberasm/assets/131226495/d03b48cd-9b69-4d8e-ac60-0d6a87179942" width="200">
 
 # Separate Map16 Pages
-
 You can have separate sets of tiles on different Map16 pages. They will autotile separately:
 
 <img src="https://github.com/CircleFriendo/AutotileUberasm/assets/131226495/8cf5684c-3a71-4505-a95f-2b38263ab959" width="200">
 <img src="https://github.com/CircleFriendo/AutotileUberasm/assets/131226495/821341ba-b7b8-432e-8092-ecf8d1661e72" width="200">
 
+# Notes
+* Adds some delay to level loads.
+* Not configured for vertical level layouts
