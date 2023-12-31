@@ -33,4 +33,3 @@ You can have separate sets of tiles on different Map16 pages. They will autotile
 
 # Notes
 * Adds some delay to level loads.
-* Not configured for vertical level layouts
