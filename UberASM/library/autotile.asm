@@ -79,6 +79,74 @@ macro shift_DRalt()
 endmacro
 
 
+;; Vert level alternate shift macros
+
+macro shift_URValt()
+    REP #$20 : TYA : CLC : ADC #$00F1 : TAY : SEP #$20
+endmacro
+
+macro shift_UValt()
+    REP #$20 : TYA : CLC : ADC #$00F0 : TAY : SEP #$20
+endmacro
+
+macro shift_ULValt()
+    REP #$20 : TYA : CLC : ADC #$00EF : TAY : SEP #$20
+endmacro
+
+
+macro shift_DRValt()
+    REP #$20 : TYA : SEC : SBC #$00EF : TAY : SEP #$20
+endmacro
+
+macro shift_DValt()
+    REP #$20 : TYA : SEC : SBC #$00F0 : TAY : SEP #$20
+endmacro
+
+macro shift_DLValt()
+    REP #$20 : TYA : SEC : SBC #$00F1 : TAY : SEP #$20
+endmacro
+
+macro shift_URseam()
+    REP #$20 : TYA : CLC : ADC #$00E1 : TAY : SEP #$20
+endmacro
+
+macro shift_Rseam()
+    REP #$20 : TYA : CLC : ADC #$00F1 : TAY : SEP #$20
+endmacro
+
+macro shift_DRseam()
+    REP #$20 : TYA : CLC : ADC #$0101 : TAY : SEP #$20
+endmacro
+
+macro shift_DLseam()
+    REP #$20 : TYA : SEC : SBC #$00E1 : TAY : SEP #$20
+endmacro
+
+macro shift_Lseam()
+    REP #$20 : TYA : SEC : SBC #$00F1 : TAY : SEP #$20
+endmacro
+
+macro shift_ULseam()
+    REP #$20 : TYA : SEC : SBC #$0101 : TAY : SEP #$20
+endmacro
+
+macro shift_ULValtseam()
+    DEY
+endmacro
+
+macro shift_URValtseam()
+    REP #$20 : TYA : CLC : ADC #$01E1 : TAY : SEP #$20
+endmacro
+
+macro shift_DLValtseam()
+    REP #$20 : TYA : SEC : SBC #$01E1 : TAY : SEP #$20
+endmacro
+
+macro shift_DRValtseam()
+    INY
+endmacro
+
+
 ; if the block to the left is from the correct map16 page,
 ; ORA in the bit that designated a block to the left    
 macro checkL()
@@ -195,9 +263,142 @@ macro checkULalt()
     ?+
 endmacro
 
+; vertical level check macros
+
+macro checkURValt()
+    LDY $06
+    %shift_URValt()
+    LDA [$08],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!UR_bit : STA $01
+    ?+
+endmacro
+
+macro checkUValt()
+    LDY $06
+    %shift_UValt()
+    LDA [$08],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!U_bit : STA $01
+    ?+
+endmacro
+
+macro checkULValt()
+    LDY $06
+    %shift_ULValt()
+    LDA [$08],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!UL_bit : STA $01
+    ?+
+endmacro
+
+macro checkDRValt()
+    LDY $06
+    %shift_DRValt()
+    LDA [$08],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!DR_bit : STA $01
+    ?+
+endmacro
+
+macro checkDValt()
+    LDY $06
+    %shift_DValt()
+    LDA [$08],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!D_bit : STA $01
+    ?+
+endmacro
+
+macro checkDLValt()
+    LDY $06
+    %shift_DLValt()
+    LDA [$08],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!DL_bit : STA $01
+    ?+
+endmacro
+
+; vertical level seam macros
+
+macro checkDRseam()
+    LDY $06
+    %shift_DRseam()
+    LDA [$6E],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!DR_bit : STA $01
+    ?+
+endmacro
+
+macro checkRseam()
+    LDY $06
+    %shift_Rseam()
+    LDA [$6E],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!R_bit : STA $01
+    ?+
+endmacro
+
+macro checkURseam()
+    LDY $06
+    %shift_URseam()
+    LDA [$6E],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!UR_bit : STA $01
+    ?+
+endmacro
+
+macro checkDLseam()
+    LDY $06
+    %shift_DLseam()
+    LDA [$6E],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!DL_bit : STA $01
+    ?+
+endmacro
+
+macro checkLseam()
+    LDY $06
+    %shift_Lseam()
+    LDA [$6E],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!L_bit : STA $01
+    ?+
+endmacro
+
+macro checkULseam()
+    LDY $06
+    %shift_ULseam()
+    LDA [$6E],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!UL_bit : STA $01
+    ?+
+endmacro
+
+macro checkULValtseam()
+    LDY $06
+    %shift_ULValtseam()
+    LDA [$08],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!UL_bit : STA $01
+    ?+
+endmacro
+
+macro checkURValtseam()
+    LDY $06
+    %shift_URValtseam()
+    LDA [$08],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!UR_bit : STA $01
+    ?+
+endmacro
+
+macro checkDLValtseam()
+    LDY $06
+    %shift_DLValtseam()
+    LDA [$08],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!DL_bit : STA $01
+    ?+
+endmacro
+
+macro checkDRValtseam()
+    LDY $06
+    %shift_DRValtseam()
+    LDA [$08],y : CMP $00 : BNE ?+
+        LDA $01 : ORA #!DR_bit : STA $01
+    ?+
+endmacro
 
 
-macro move_screen_right()
+; screen macros
+
+macro move_next_screen()
     REP #$20
         LDA $6B
         CLC : ADC $13D7|!addr
@@ -206,7 +407,7 @@ macro move_screen_right()
     SEP #$20
 endmacro
 
-macro set_alternate_page_left()
+macro set_alternate_page_prev()
     REP #$20
         LDA $6B
         SEC : SBC $13D7|!addr
@@ -214,7 +415,7 @@ macro set_alternate_page_left()
     SEP #$20
 endmacro
 
-macro set_alternate_page_right()
+macro set_alternate_page_next()
     REP #$20
         LDA $6B
         CLC : ADC $13D7|!addr
@@ -226,31 +427,40 @@ endmacro
 
 run:
     
-    REP #$20
-        LDA #$C800 : STA $6B : STA $6E
-    SEP #$20
+    REP #$20 : LDA #$C800 : STA $6B : STA $6E : SEP #$20
     
     LDA $70 : STA $0A  ;; set up [$08] for the table at $7FC800
     
     REP #$10
     
-    JSR ProcessLayer
+    LDA $5B : AND #$03 : BNE +
+        JSR ProcessHorizontal
+        BRA ++
+    + JSR ProcessVertical
+    
+    ++ SEP #$30 
+    RTL
+    
+ProcessHorizontal:
+    
+    JSR ProcessLayer  ; process layer 1
     
     LDA $0BF5|!addr : ASL : BCC +   ; Layer 2 active
     
-    REP #$20    ; calculate layer 2 map16
-        AND #$003E : TAX
+        REP #$20    ; calculate layer 2 map16
+            AND #$003E : TAX
+            
+            LDA.l Layer2Offset,x : STA $6B : STA $6E
+        SEP #$20
         
-        LDA.l Layer2Offset,x : STA $6B : STA $6E
-    SEP #$20
+        LDA $70 : STA $0A  ;; set up [$08] for the table at $7FC800
+        
+        ;REP #$10
+        
+        JSR ProcessLayer
     
-    LDA $70 : STA $0A  ;; set up [$08] for the table at $7FC800
+    + RTS
     
-    REP #$10
-    
-    JSR ProcessLayer
-    
-    + RTL
     
 Layer2Offset:
     dw $E300, $E400, $E330, $E400, $E3A0, $E3C0, $E480, $E380
@@ -315,16 +525,133 @@ ProcessScreen:
         
         JSR ProcessCornerTiles
             
-        %move_screen_right()
+        %move_next_screen()
         LDA $03 : INC : STA $03 : CMP $5D : BEQ + 
             JMP ProcessScreen
         +
         
     SEP #$30
          
+    RTS
+ 
+ProcessVertical:
+    REP #$20 : LDA #$0200 : STA $13D7|!addr : SEP #$20
+    
+    JSR ProcessVLayer  ; process layer 1
+    
+    LDA $5B : AND #$02 : BEQ +   ; Layer 2 active
+        
+        REP #$20 : LDA #$E400 : STA $6B : STA $6E : SEP #$20
+        LDA $70 : STA $0A  ;; set up [$08] for the table at $7FC800
+        
+        ;REP #$10
+        
+        JSR ProcessVLayer
+    
+    + RTS
+ 
+ProcessVLayer:
+    STZ $03
+    
+ProcessVScreen: 
+    ;left half
+        ;process middle tiles
+        LDY #$0011     ; skip first row
+        -   TYA : AND #$0F : CMP #$0F : BNE +
+                INY : INY ; skip right and left column
+            +
+            JSR ProcessTile
+            INY : CPY #$00EF : BNE -     ; skip last row
+    
+        ;process top tiles
+        LDY #$0001
+        -   LDA $03 : BEQ +
+                JSR ProcessVTopTile
+                BRA ++
+            +
+                JSR ProcessVTopEdgeTile
+            ++               
+            INY : CPY #$000F : BNE -
+    
+        ;process bottom tiles
+        LDY #$00F1
+        -   LDA $03 : INC : CMP $5D : BEQ +
+                JSR ProcessVBottomTile
+                BRA ++
+            +
+                JSR ProcessVBottomEdgeTile
+            ++
+            INY : CPY #$00FF : BNE -
+        
+         ;process left tiles
+        LDY #$0010
+        -   
+            JSR ProcessVLeftTile
+            %shift_D()
+            CPY #$00F0 : BNE -
+        
+         ;process right seam tiles
+        LDY #$001F
+        -   
+            JSR ProcessVRightSeamTile
+            %shift_D()
+            CPY #$00FF : BNE -
+        
+        
+        
+    ; right half
+        ;process middle tiles
+        LDY #$0111     ; skip first row
+        -   TYA : AND #$0F : CMP #$0F : BNE +
+                INY : INY ; skip right and left column
+            +
+            JSR ProcessTile
+            INY : CPY #$01EF : BNE -     ; skip last row
+    
+        ;process top tiles
+        LDY #$0101
+        -   LDA $03 : BEQ +
+                JSR ProcessVTopTile
+                BRA ++
+            +
+                JSR ProcessVTopEdgeTile
+            ++               
+            INY : CPY #$010F : BNE -
+        
+        ;process bottom tiles
+        LDY #$01F1
+        -   LDA $03 : INC : CMP $5D : BEQ +
+                JSR ProcessVBottomTile
+                BRA ++
+            +
+                JSR ProcessVBottomEdgeTile
+            ++
+            INY : CPY #$01FF : BNE -
+    
+         ;process right tiles
+        LDY #$011F
+        -   
+            JSR ProcessVRightTile
+            %shift_D()
+            CPY #$01FF : BNE -
+    
+         ;process left seam tiles
+        LDY #$0110
+        -   
+            JSR ProcessVLeftSeamTile
+            %shift_D()
+            CPY #$01F0 : BNE -
+    
+        JSR ProcessVCornerTiles
+    
+        %move_next_screen()
+        LDA $03 : INC : STA $03 : CMP $5D : BEQ + 
+            JMP ProcessVScreen
+        +
+    
     - RTS
-    
-    
+ 
+ 
 ProcessTile:
     LDA [$6B],y : CMP #$00 : BNE -
     LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
@@ -393,7 +720,7 @@ ProcessLeftTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_left()
+        %set_alternate_page_prev()
         
         %checkLalt()  ;
         %checkDLalt() ;
@@ -437,7 +764,7 @@ ProcessRightTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_right()
+        %set_alternate_page_next()
         
         %checkL()
         %checkDL()
@@ -481,7 +808,7 @@ ProcessTopLeftTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_left()
+        %set_alternate_page_prev()
         
         %checkLalt()  ;
         %checkDLalt() ;
@@ -503,7 +830,7 @@ ProcessBottomLeftTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_left()
+        %set_alternate_page_prev()
         
         %checkLalt()  ;
         ;%checkDLalt() ;
@@ -525,7 +852,7 @@ ProcessTopRightTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_right()
+        %set_alternate_page_next()
         
         %checkL()
         %checkDL()
@@ -547,7 +874,7 @@ ProcessBottomRightTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_right()
+        %set_alternate_page_next()
         
         %checkL()
         ;%checkDL()
@@ -580,8 +907,393 @@ ProcessCornerTiles:
     SEP #$20
     JSR ProcessBottomRightTile
     
-    RTS
-   
+    - RTS
+
+; Vertical edges work differently
+
+ProcessVTopTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        
+        %set_alternate_page_prev()
+        
+        %checkL()
+        %checkDL()
+        %checkD()
+        %checkDR()
+        %checkR()
+        %checkURValt()
+        %checkUValt()
+        %checkULValt()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+        
+    - RTS
+
+ProcessVBottomTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        
+        %set_alternate_page_next()
+        
+        %checkL()
+        %checkDLValt()
+        %checkDValt()
+        %checkDRValt()
+        %checkR()
+        %checkUR()
+        %checkU()
+        %checkUL()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+        
+    - RTS
+
+ProcessVLeftTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        
+        ;%checkL()
+        ;%checkDL()
+        %checkD()
+        %checkDR()
+        %checkR()
+        %checkUR()
+        %checkU()
+        ;%checkUL()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+        
+    - RTS   
+
+ProcessVRightTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        
+        %checkL()
+        %checkDL()
+        %checkD()
+        ;%checkDR()
+        ;%checkR()
+        ;%checkUR()
+        %checkU()
+        %checkUL()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+        
+    - RTS   
+
+ProcessVTopEdgeTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        
+        ;%set_alternate_page_prev()
+        
+        %checkL()
+        %checkDL()
+        %checkD()
+        %checkDR()
+        %checkR()
+        ;%checkURValt()
+        ;%checkUValt()
+        ;%checkULValt()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+        
+    - RTS
+
+ProcessVBottomEdgeTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        
+        ;%set_alternate_page_next()
+        
+        %checkL()
+        ;%checkDLValt()
+        ;%checkDValt()
+        ;%checkDRValt()
+        %checkR()
+        %checkUR()
+        %checkU()
+        %checkUL()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+        
+    - RTS
+
+ProcessVRightSeamTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        
+        %checkL()
+        %checkDL()
+        %checkD()
+        %checkDRseam()
+        %checkRseam()
+        %checkURseam()
+        %checkU()
+        %checkUL()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+        
+    - RTS   
+
+ProcessVLeftSeamTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        
+        %checkLseam()
+        %checkDLseam()
+        %checkD()
+        %checkDR()
+        %checkR()
+        %checkUR()
+        %checkU()
+        %checkULseam()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+        
+    - RTS   
+
+ProcessVTopLeftTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        %set_alternate_page_prev()
+        
+        ;%checkL()  
+        ;%checkDL() 
+        %checkD()
+        %checkDR()
+        %checkR()
+        %checkURValt()
+        %checkUValt()
+        ;%checkUL()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+    
+    - RTS
+
+ProcessVTopRightTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        %set_alternate_page_prev()
+        
+        %checkL()  
+        %checkDL() 
+        %checkD()
+        ;%checkDR()
+        ;%checkR()
+        ;%checkURValt()
+        %checkUValt()
+        %checkULValt()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+    
+    - RTS
+
+ProcessVBottomLeftTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        %set_alternate_page_next()
+        
+        ;%checkL()  
+        ;%checkDL() 
+        %checkDValt()
+        %checkDRValt()
+        %checkR()
+        %checkUR()
+        %checkU()
+        ;%checkULValt()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+    
+    - RTS
+
+ProcessVBottomRightTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        %set_alternate_page_next()
+        
+        %checkL()  
+        %checkDLValt() 
+        %checkDValt()
+        ;%checkDRValt()
+        ;%checkR()
+        ;%checkUR()
+        %checkU()
+        %checkUL()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+    
+    - RTS
+
+ProcessVTopLeftSeamTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        %set_alternate_page_prev()
+        
+        %checkLseam()  
+        %checkDLseam() 
+        %checkD()
+        %checkDR()
+        %checkR()
+        %checkURValt()
+        %checkUValt()
+        %checkULValtseam()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+    
+    - RTS
+
+ProcessVTopRightSeamTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        %set_alternate_page_prev()
+        
+        %checkL()  
+        %checkDL() 
+        %checkD()
+        %checkDRseam()
+        %checkRseam()
+        %checkURValtseam()
+        %checkUValt()
+        %checkULValt()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+    
+    - RTS
+
+ProcessVBottomLeftSeamTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        %set_alternate_page_next()
+        
+        %checkLseam()  
+        %checkDLValtseam() 
+        %checkDValt()
+        %checkDRValt()
+        %checkR()
+        %checkUR()
+        %checkU()
+        %checkULseam()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+    
+    - RTS
+
+ProcessVBottomRightSeamTile:
+    LDA [$6B],y : CMP #$00 : BNE -
+    LDA [$6E],y : STA $00 : AND #!map16_filter : BEQ -
+    
+        STZ $01 : STZ $02  ; initialize replacement tile
+        STY $06
+        %set_alternate_page_next()
+        
+        %checkL()  
+        %checkDLValt() 
+        %checkDValt()
+        %checkDRValtseam()
+        %checkRseam()
+        %checkURseam()
+        %checkU()
+        %checkUL()
+        
+        LDY $06
+        LDX $01 : LDA.l Autotiles,x : STA [$6B],y
+    
+    - RTS
+
+
+
+ProcessVCornerTiles:
+    ; corners
+    LDY #$0000
+    JSR ProcessVTopLeftTile
+    
+    LDY #$010F
+    JSR ProcessVTopRightTile
+    
+    LDY #$00F0
+    JSR ProcessVBottomLeftTile
+    
+    LDY #$01FF
+    JSR ProcessVBottomRightTile
+    
+    ; seams
+    
+    LDY #$0100
+    JSR ProcessVTopLeftSeamTile
+    
+    LDY #$000F
+    JSR ProcessVTopRightSeamTile
+    
+    LDY #$01F0
+    JSR ProcessVBottomLeftSeamTile
+    
+    LDY #$00FF
+    JSR ProcessVBottomRightSeamTile
+    
+    - RTS
 
 Autotiles:
     
