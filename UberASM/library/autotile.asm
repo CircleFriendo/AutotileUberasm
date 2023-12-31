@@ -449,13 +449,10 @@ ProcessHorizontal:
     
         REP #$20    ; calculate layer 2 map16
             AND #$003E : TAX
-            
             LDA.l Layer2Offset,x : STA $6B : STA $6E
         SEP #$20
         
         LDA $70 : STA $0A  ;; set up [$08] for the table at $7FC800
-        
-        ;REP #$10
         
         JSR ProcessLayer
     
@@ -502,27 +499,32 @@ ProcessScreen:
         REP #$20
             LDA $13D7|!addr : SEC : SBC #$0010 : STA $04
         SEP #$20
-        -   LDA $03 : BEQ +
-                JSR ProcessLeftTile
-                BRA ++
-            +
-                JSR ProcessLeftEdgeTile
-            ++
-            %shift_D()
-            CPY $04 : BNE -
+        LDA $03 : BEQ +
+            - JSR ProcessLeftTile
+                %shift_D()
+                CPY $04 : BNE -
+            BRA ++
+        +
+            - JSR ProcessLeftEdgeTile
+                %shift_D()
+                CPY $04 : BNE -
+        ++
+        
         
         ;process right tiles
         LDY #$001F
         REP #$20 : LDA $13D7|!addr : DEC : STA $04 : SEP #$20
-        -   LDA $03 : INC : CMP $5D : BEQ +
-                JSR ProcessRightTile
-                BRA ++
-            +
-                JSR ProcessRightEdgeTile
-            ++
-            %shift_D()
-            CPY $04 : BNE -
-        
+        LDA $03 : INC : CMP $5D : BEQ +
+            - JSR ProcessRightTile
+                %shift_D()
+                CPY $04 : BNE -
+            BRA ++
+        +
+            - JSR ProcessRightEdgeTile
+                %shift_D()
+                CPY $04 : BNE -
+        ++
+            
         JSR ProcessCornerTiles
             
         %move_next_screen()
@@ -544,8 +546,6 @@ ProcessVertical:
         REP #$20 : LDA #$E400 : STA $6B : STA $6E : SEP #$20
         LDA $70 : STA $0A  ;; set up [$08] for the table at $7FC800
         
-        ;REP #$10
-        
         JSR ProcessVLayer
     
     + RTS
@@ -565,23 +565,26 @@ ProcessVScreen:
     
         ;process top tiles
         LDY #$0001
-        -   LDA $03 : BEQ +
-                JSR ProcessVTopTile
-                BRA ++
-            +
-                JSR ProcessVTopEdgeTile
-            ++               
-            INY : CPY #$000F : BNE -
-    
+        LDA $03 : BEQ +
+            - JSR ProcessVTopTile
+                INY : CPY #$000F : BNE -
+            BRA ++
+        +
+            - JSR ProcessVTopEdgeTile
+                INY : CPY #$000F : BNE -
+        ++               
+            
         ;process bottom tiles
         LDY #$00F1
-        -   LDA $03 : INC : CMP $5D : BEQ +
-                JSR ProcessVBottomTile
-                BRA ++
-            +
-                JSR ProcessVBottomEdgeTile
-            ++
-            INY : CPY #$00FF : BNE -
+        LDA $03 : INC : CMP $5D : BEQ +
+            - JSR ProcessVBottomTile
+                INY : CPY #$00FF : BNE -
+            BRA ++
+        +
+           - JSR ProcessVBottomEdgeTile
+                INY : CPY #$00FF : BNE -
+        ++
+           
         
          ;process left tiles
         LDY #$0010
@@ -610,23 +613,25 @@ ProcessVScreen:
     
         ;process top tiles
         LDY #$0101
-        -   LDA $03 : BEQ +
-                JSR ProcessVTopTile
-                BRA ++
-            +
-                JSR ProcessVTopEdgeTile
-            ++               
-            INY : CPY #$010F : BNE -
-        
+        LDA $03 : BEQ +
+            - JSR ProcessVTopTile
+                INY : CPY #$010F : BNE -
+            BRA ++
+        +
+            - JSR ProcessVTopEdgeTile
+                INY : CPY #$010F : BNE -
+        ++               
+            
         ;process bottom tiles
         LDY #$01F1
-        -   LDA $03 : INC : CMP $5D : BEQ +
-                JSR ProcessVBottomTile
-                BRA ++
-            +
-                JSR ProcessVBottomEdgeTile
-            ++
-            INY : CPY #$01FF : BNE -
+        LDA $03 : INC : CMP $5D : BEQ +
+            - JSR ProcessVBottomTile
+                INY : CPY #$01FF : BNE -
+            BRA ++
+        +
+           - JSR ProcessVBottomEdgeTile
+                INY : CPY #$01FF : BNE -
+        ++
     
          ;process right tiles
         LDY #$011F
@@ -808,10 +813,13 @@ ProcessTopLeftTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_prev()
         
-        %checkLalt()  ;
-        %checkDLalt() ;
+        LDA $03 : BEQ + 
+            %set_alternate_page_prev()
+            
+            %checkLalt()  ;
+            %checkDLalt() ;
+        +
         %checkD()
         %checkDR()
         %checkR()
@@ -830,16 +838,21 @@ ProcessBottomLeftTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_prev()
         
-        %checkLalt()  ;
-        ;%checkDLalt() ;
+        LDA $03 : BEQ + 
+            %set_alternate_page_prev()
+            
+            %checkLalt()
+            %checkULalt() 
+        +
+        
+        ;%checkDLalt() 
         ;%checkD()
         ;%checkDR()
         %checkR()
         %checkUR()
         %checkU()
-        %checkULalt() ;
+        
         
         LDY $06
         LDX $01 : LDA.l Autotiles,x : STA [$6B],y
@@ -852,13 +865,17 @@ ProcessTopRightTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_next()
+        
+        LDA $03 : INC : CMP $5D : BEQ +
+            %set_alternate_page_next()
+            
+            %checkDRalt()
+            %checkRalt()
+        +
         
         %checkL()
         %checkDL()
         %checkD()
-        %checkDRalt()
-        %checkRalt()
         ;%checkURalt()
         ;%checkU()
         ;%checkUL()
@@ -874,14 +891,18 @@ ProcessBottomRightTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_next()
+        
+        LDA $03 : INC : CMP $5D : BEQ +
+            %set_alternate_page_next()
+            
+            %checkRalt()
+            %checkURalt()
+        +
         
         %checkL()
         ;%checkDL()
         ;%checkD()
         ;%checkDRalt()
-        %checkRalt()
-        %checkURalt()
         %checkU()
         %checkUL()
         
@@ -1093,15 +1114,19 @@ ProcessVTopLeftTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_prev()
+        
+        LDA $03 : BEQ +
+            %set_alternate_page_prev()
+        
+            %checkURValt()
+            %checkUValt()    
+        +
         
         ;%checkL()  
         ;%checkDL() 
         %checkD()
         %checkDR()
         %checkR()
-        %checkURValt()
-        %checkUValt()
         ;%checkUL()
         
         LDY $06
@@ -1115,7 +1140,13 @@ ProcessVTopRightTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_prev()
+        
+        LDA $03 : BEQ +
+            %set_alternate_page_prev()
+        
+            %checkUValt()
+            %checkULValt()
+        +
         
         %checkL()  
         %checkDL() 
@@ -1123,8 +1154,7 @@ ProcessVTopRightTile:
         ;%checkDR()
         ;%checkR()
         ;%checkURValt()
-        %checkUValt()
-        %checkULValt()
+        
         
         LDY $06
         LDX $01 : LDA.l Autotiles,x : STA [$6B],y
@@ -1137,12 +1167,16 @@ ProcessVBottomLeftTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_next()
+        
+        LDA $03 : INC : CMP $5D : BEQ +
+            %set_alternate_page_next()
+        
+            %checkDValt()
+            %checkDRValt()
+        +
         
         ;%checkL()  
         ;%checkDL() 
-        %checkDValt()
-        %checkDRValt()
         %checkR()
         %checkUR()
         %checkU()
@@ -1159,11 +1193,15 @@ ProcessVBottomRightTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_next()
+        
+        LDA $03 : INC : CMP $5D : BEQ +
+            %set_alternate_page_next()
+        
+            %checkDLValt() 
+            %checkDValt()
+        +
         
         %checkL()  
-        %checkDLValt() 
-        %checkDValt()
         ;%checkDRValt()
         ;%checkR()
         ;%checkUR()
@@ -1181,16 +1219,21 @@ ProcessVTopLeftSeamTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_prev()
+        
+        LDA $03 : BEQ +
+            %set_alternate_page_prev()
+         
+            %checkURValt()
+            %checkUValt()
+            %checkULValtseam()   
+        +
         
         %checkLseam()  
         %checkDLseam() 
         %checkD()
         %checkDR()
         %checkR()
-        %checkURValt()
-        %checkUValt()
-        %checkULValtseam()
+        
         
         LDY $06
         LDX $01 : LDA.l Autotiles,x : STA [$6B],y
@@ -1203,16 +1246,21 @@ ProcessVTopRightSeamTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_prev()
+        
+        LDA $03 : BEQ +
+            %set_alternate_page_prev()
+            
+            %checkURValtseam()
+            %checkUValt()
+            %checkULValt()
+        +
         
         %checkL()  
         %checkDL() 
         %checkD()
         %checkDRseam()
         %checkRseam()
-        %checkURValtseam()
-        %checkUValt()
-        %checkULValt()
+        
         
         LDY $06
         LDX $01 : LDA.l Autotiles,x : STA [$6B],y
@@ -1225,12 +1273,16 @@ ProcessVBottomLeftSeamTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_next()
+        
+        LDA $03 : INC : CMP $5D : BEQ +
+            %set_alternate_page_next()
+            
+            %checkDLValtseam() 
+            %checkDValt()
+            %checkDRValt()
+        +
         
         %checkLseam()  
-        %checkDLValtseam() 
-        %checkDValt()
-        %checkDRValt()
         %checkR()
         %checkUR()
         %checkU()
@@ -1247,12 +1299,16 @@ ProcessVBottomRightSeamTile:
     
         STZ $01 : STZ $02  ; initialize replacement tile
         STY $06
-        %set_alternate_page_next()
+        
+        LDA $03 : INC : CMP $5D : BEQ +
+            %set_alternate_page_next()
+        
+            %checkDLValt() 
+            %checkDValt()
+            %checkDRValtseam()
+        +
         
         %checkL()  
-        %checkDLValt() 
-        %checkDValt()
-        %checkDRValtseam()
         %checkRseam()
         %checkURseam()
         %checkU()
