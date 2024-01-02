@@ -532,8 +532,6 @@ ProcessScreen:
             JMP ProcessScreen
         +
         
-    SEP #$30
-         
     RTS
  
 ProcessVertical:
